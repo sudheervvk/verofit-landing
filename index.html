@@ -349,18 +349,52 @@ form > * { min-width: 0; }
     document.addEventListener('DOMContentLoaded', sizeScreenshots);
     window.addEventListener('resize', sizeScreenshots);
 
-    // Netlify forms inline submit
-    const form = document.getElementById('waitlist-form'); const ok = document.getElementById('status'); const err = document.getElementById('error');
-    if(form){
-      form.addEventListener('submit', async (e)=>{
-        e.preventDefault();
-        const data = new FormData(form);
-        try{
-          await fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams(data).toString() });
-          ok.style.display='block'; err.style.display='none'; form.reset();
-        }catch(_){ err.style.display='block'; ok.style.display='none'; }
-      });
-    }
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.qa .q').forEach(q=>{ q.addEventListener('click',()=>q.parentElement.classList.toggle('open')); });
+
+    // Fit screenshots...
+    function sizeScreenshots(){ ... }
+    document.addEventListener('DOMContentLoaded', sizeScreenshots);
+    window.addEventListener('resize', sizeScreenshots);
+
+    // ✅ Xano form submission
+    const form = document.getElementById('waitlist-form');
+    const messageBox = document.getElementById('form-message');
+
+    function getUTMParams() { ... }
+    function getDeviceInfo() { ... }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const baseData = { name: form.name.value, email: form.email.value, sport: form.sport.value, signup_url: window.location.href, referrer: document.referrer || null, language: navigator.language || null, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null, ...getUTMParams(), ...getDeviceInfo() };
+
+      try {
+        const geoRes = await fetch("https://ipapi.co/json/");
+        const geoData = await geoRes.json();
+        baseData.country = geoData.country_name || null;
+        baseData.city = geoData.city || null;
+
+        const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(baseData),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          messageBox.textContent = data.message;
+          messageBox.style.color = "#4ade80";
+          form.reset();
+        } else {
+          messageBox.textContent = data.message;
+          messageBox.style.color = "#f87171";
+        }
+      } catch (err) {
+        messageBox.textContent = "Error connecting to server. Please try again later.";
+        messageBox.style.color = "#f87171";
+      }
+    });
   </script>
 
 <script>
