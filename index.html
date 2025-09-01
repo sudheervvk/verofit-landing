@@ -1,15 +1,17 @@
 <!doctype html>
 <html lang="en">
-<head>
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XMVPNW6YH1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XMVPNW6YH1');
-  </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XMVPNW6YH1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  // Replace with your GA4 Measurement ID
+  gtag('config', 'G-XMVPNW6YH1');
+</script>
+
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VeroFit — AI Training Plans with Tournament Mode</title>
@@ -23,7 +25,7 @@
 
   <!-- Favicon -->
   <link rel="icon" href="Icon_Lite.png" type="image/png" />
-  <link rel="canonical" href="https://verofit.verletics.com/" />
+  <link rel="canonical" href="https://yourdomain.com/" />
 
   <style>
     :root{
@@ -107,75 +109,174 @@
 
     footer{padding:32px 0;color:#94a3b8;border-top:1px solid rgba(148,163,184,.15)}
 
-    /* Mobile Optimizations */
+    /* ==================== MOBILE OPTIMIZATIONS ==================== */
     @media (max-width:768px){
       html,body{font-size:18px}
       .container{padding:0 14px}
+
       .hero{padding:48px 0 16px}
       .hero-grid{grid-template-columns:1fr;row-gap:28px}
       .hero-card{justify-self:center}
       .phone-frame{border-width:10px;border-radius:28px}
-      .phone-frame img{width:100%;height:auto}
+      .phone-frame img{width:100%;height:auto} /* on mobile we scale by width */
+
       .cards{grid-template-columns:1fr}
       .card{padding:18px;margin:12px 0}
+
       .features .panel{grid-template-columns:1fr;row-gap:24px}
       .features .panel .phone-col{justify-self:center}
       .features .section-title{font-size:1.4rem}
+
       .how{grid-template-columns:1fr}
       .how .card{padding:18px;margin:12px 0}
+
       .cta{padding:18px}
       form{grid-template-columns:1fr}
       form button.btn{width:100%;justify-self:stretch}
-      .btn{width:100%}
+      .btn{width:100%} /* hero CTA full-width for easier tap */
       .q{padding:20px}
     }
+
     @media (max-width:420px){
       .h1{font-size:28px}
       .sub{font-size:.95rem}
       .section-title{font-size:1.4rem}
     }
-    html, body { overflow-x: hidden; }
-    .container { max-width: 1120px; width: 100%; overflow-x: hidden; }
-    .cta { overflow: hidden; }
-    form > * { min-width: 0; }
-    @media (min-width: 769px){
-      form button.btn{ width: auto !important; justify-self: start !important; padding: 12px 18px !important; height: auto !important; line-height: 1 !important; align-self: center !important; }
-    }
-    @media (max-width: 768px){
-      form{ grid-template-columns: 1fr !important; }
-      form input, form select, form button{ width: 100% !important; }
-      form select{ max-width: 100%; }
-    }
-  </style>
+  
+/* === MOBILE OVERFLOW FIXES === */
+html, body { overflow-x: hidden; }
+.container { max-width: 1120px; width: 100%; overflow-x: hidden; }
+.cta { overflow: hidden; }
 
-  <style>
-    .sports-list {
-      margin-top: 15px;
-      font-size: 0.9rem;
-      color: #ccc;
-      text-align: left;
-      max-width: 90%;
-      word-wrap: break-word;
-    }
-    #waitlist-form input,
-    #waitlist-form select {
-      border-radius: 9999px;
-      background-color: #1c1f2e;
-      color: #fff;
-      border: 1px solid #444;
-      padding: 12px 16px;
-    }
-    input:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0px 1000px #1c1f2e inset !important;
-      -webkit-text-fill-color: #fff !important;
-      caret-color: #fff;
-      border-radius: 9999px;
-    }
-  </style>
+/* Allow grid children to shrink inside the form on small screens */
+form > * { min-width: 0; }
+
+/* Desktop: button matches hero/nav sizing */
+@media (min-width: 769px){
+  form button.btn{
+    width: auto !important;
+    justify-self: start !important;
+    padding: 12px 18px !important;
+    height: auto !important;
+    line-height: 1 !important;
+    align-self: center !important;
+  }
+}
+
+/* Mobile: full width but no overflow */
+@media (max-width: 768px){
+  form{ grid-template-columns: 1fr !important; }
+  form input, form select, form button{ width: 100% !important; }
+  form select{ max-width: 100%; }
+}
+
+</style>
+
+<style>
+  .sports-list {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #ccc;
+    text-align: left;
+    max-width: 90%;
+    word-wrap: break-word;
+  }
+  #waitlist-form input,
+  #waitlist-form select {
+    border-radius: 9999px; /* match CTA pill shape */
+    background-color: #1c1f2e;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 12px 16px;
+  }
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #1c1f2e inset !important;
+    -webkit-text-fill-color: #fff !important;
+    caret-color: #fff;
+    border-radius: 9999px;
+  }
+</style>
+
 </head>
 <body>
+
   <!-- NAV -->
-  <!-- ... [nav + hero + why + features + how sections unchanged] ... -->
+  <div class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <img src="Icon_Lite.png" alt="VeroFit icon" class="logo">
+        <div class="brand-name">VeroFit</div>
+      </div>
+      <nav class="nav-links">
+        <a href="#why">Why VeroFit</a>
+        <a href="#how">How it Works</a>
+        <a href="#about">About us</a>
+        <a href="#faqs">FAQs</a>
+        <a href="#cta" class="btn">Join Early Access</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <h1 class="h1">Train Smarter. Compete Harder. Powered by AI.</h1>
+        <p class="sub">Your personalized sports training partner—adaptive drills, evolving plans, and a Tournament Mode which phases, adjusts intensity and recovery, and times your workload for competition day.</p>
+        <div class="price-note">Launch Offer: <span id="price"></span>/month • First 100 lock in <strong>30% off for your first year</strong></div>
+        <div style="margin-top:16px"><a href="#cta" class="btn">Join Early Access</a></div>
+      </div>
+      <div class="hero-card">
+        <div class="phone-frame"><img class="screenshot" src="Home.png" alt="App Home with readiness card"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WHY DIFFERENT -->
+  <section id="why">
+    <div class="container">
+      <h2 class="section-title">Why VeroFit is Different</h2>
+      <div class="cards">
+        <div class="card"><h3>Smarter, Not Harder</h3><p class="muted">AI that adapts to your game—every session evolves with your progress.</p></div>
+        <div class="card"><h3>Your Sport. Your Edge.</h3><p class="muted">Whether endurance, strength, or speed—get drills designed for your sport’s demands.</p></div>
+        <div class="card"><h3>Train for Competition Day</h3><p class="muted">A Tournament Mode which phases your plan, adjusts intensity and recovery, and times your workload so you peak exactly when it matters.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE PANELS -->
+  <section>
+    <div class="container features">
+      <div class="panel">
+        <div class="text"><h2 class="section-title">App Home &amp; Readiness</h2><p class="muted">See exactly what to train today, with a dashboard that adapts to your readiness and logs.</p></div>
+        <div class="phone-col"><div class="phone-frame"><img class="screenshot" src="FitnessPlan1.png" alt="Fitness plan screen"></div></div>
+      </div>
+      <div class="panel">
+        <div class="text"><h2 class="section-title">Personalized, Sport-Specific Drills</h2><p class="muted">Build speed, agility, endurance—or whatever your sport demands—at the right phase of training.</p></div>
+        <div class="phone-col"><div class="phone-frame"><img class="screenshot" src="fitnessPlan2.png" alt="Fitness plan detail screen"></div></div>
+      </div>
+      <div class="panel">
+        <div class="text"><h2 class="section-title">Adaptive from Your Logs</h2><p class="muted">Your plan learns as you train, tuning intensity and recovery to keep you on track.</p></div>
+        <div class="phone-col"><div class="phone-frame"><img class="screenshot" src="Checkin.png" alt="Daily check-in screen"></div></div>
+      </div>
+      <div class="panel">
+        <div class="text"><h2 class="section-title">Peak with Tournament Mode</h2><p class="muted">Log your competition date. VeroFit auto-adjusts your load and taper so you arrive fresh, sharp, and ready.</p></div>
+        <div class="phone-col"><div class="phone-frame"><img class="screenshot" src="tournament2.png" alt="Tournament mode screen"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="container">
+      <h2 class="section-title">How It Works</h2>
+      <div class="how">
+        <div class="card"><div class="num">01</div><h3>Tell us about you</h3><p class="muted">Your sport, goals, and equipment in under 2 minutes.</p></div>
+        <div class="card"><div class="num">02</div><h3>AI builds your plan</h3><p class="muted">A structured, adaptive training roadmap instantly generated for you.</p></div>
+        <div class="card"><div class="num">03</div><h3>Log &amp; evolve</h3><p class="muted">Each session makes your plan smarter—so you keep progressing, safely.</p></div>
+      </div>
+    </div>
+  </section>
 
   <!-- CTA / WAITLIST -->
   <section id="cta">
@@ -184,10 +285,12 @@
         <h2 class="section-title" style="margin:0">Get Early Access</h2>
         <p class="muted" style="margin:6px 0 0">Be among the first 100 and secure <strong>30% off for your first year</strong>.</p>
 
-        <form id="waitlist-form">
+        <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="dont-fill" id="waitlist-form">
+          <input type="hidden" name="form-name" value="waitlist">
+          <p hidden><label>Don’t fill this out: <input name="dont-fill" /></label></p>
           <input required type="text" name="name" autocomplete="name" placeholder="Your name" />
           <input required type="email" name="email" autocomplete="email" placeholder="name@yourmail.com" />
-          <select name="sport" required>
+          <select name="sport">
             <option value="" disabled selected>Your sport</option>
             <option>Marathon</option><option>Football</option><option>Tennis</option><option>Badminton</option>
             <option>Basketball</option><option>Cricket</option><option>Table Tennis</option>
@@ -195,70 +298,166 @@
           </select>
           <button type="submit" class="btn">Join Early Access</button>
         </form>
-        <div id="form-message" style="margin-top:10px;font-size:0.9rem;"></div>
+<div id=\"form-message\" style=\"margin-top:10px;font-size:0.9rem;\"></div>
         <div class="helper">We only email about Early Access. Unsubscribe anytime.</div>
+        <div id="status" class="success" role="status" aria-live="polite" style="display:none">Thanks for joining! Watch your inbox for Early Access.</div>
+        <div id="error" class="error" role="status" aria-live="polite" style="display:none">Something went wrong—please try again.</div>
       </div>
     </div>
   </section>
 
-  <!-- ABOUT + FAQS -->
-  <!-- ... [rest of content unchanged] ... -->
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">About Us</h2>
+      <div class="card">
+        <p>Built by lifelong athletes turned engineers, we know what it feels like to train, compete, and strive for more. After years in software jobs, we returned to our passion—sports—to create a tool we wish we had: an adaptive AI coach that understands athletes.</p>
+        <p>This is not just an app. It’s a movement to help everyday athletes unlock professional-level training with the power of AI.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQS -->
+  <section id="faqs">
+    <div class="container">
+      <h2 class="section-title">FAQs</h2>
+      <div class="faq">
+        <div class="qa"><div class="q"><h4>1. What makes this different from other fitness apps?</h4><span>+</span></div><div class="a">Most fitness apps give you static plans or generic workouts. Our platform uses adaptive AI that learns from your performance, fatigue, and goals—so your plan evolves as you do. It’s like having a personal coach in your pocket, but smarter and available 24/7.</div></div>
+        <div class="qa"><div class="q"><h4>2. Do I need to be a professional athlete to use this?</h4><span>+</span></div><div class="a">Not at all! Whether you’re a weekend runner, a competitive amateur, or aiming for professional-level performance, the system adjusts to your level. Beginners get structured guidance, while advanced athletes benefit from progressive periodization and smarter load management.</div></div>
+        <div class="qa"><div class="q"><h4>3. How does the AI actually work?</h4><span>+</span></div><div class="a">Our AI analyzes your training logs, performance data, and goals to create tailored drills and progression. Over time, it detects patterns in how you recover, adapt, and perform—so your training becomes increasingly personal and effective. Think of it as a coach that never stops learning about you.</div></div>
+        <div class="qa"><div class="q"><h4>4. Is this just about fitness, or does it cover recovery and nutrition too?</h4><span>+</span></div><div class="a">Our first launch focuses on sport-specific training plans and adaptive fitness. Recovery and nutrition insights are on our roadmap, but we believe in doing one thing exceptionally well first: helping athletes train smarter for lasting results.</div></div>
+        <div class="qa"><div class="q"><h4>5. Will my data be safe?</h4><span>+</span></div><div class="a">Absolutely. Your performance data is yours. We use industry-standard encryption and never sell your personal information. Our mission is to empower athletes, not exploit their data.</div></div>
+        <div class="qa"><div class="q"><h4>6. What do I get by joining the waitlist now?</h4><span>+</span></div><div class="a">Early access to the platform before public launch, 30% off for your first year, and a direct line to influence features as we build. You’re not just signing up—you’re shaping the future of AI-powered sports training.</div></div>
+      </div>
+    </div>
+  </section>
 
   <footer><div class="container">© 2025 Verletics — VeroFit. All rights reserved.</div></footer>
 
   <script>
     // FAQ accordion
-    document.querySelectorAll('.qa .q').forEach(q=>{
-      q.addEventListener('click',()=>q.parentElement.classList.toggle('open'));
-    });
+    document.querySelectorAll('.qa .q').forEach(q=>{ q.addEventListener('click',()=>q.parentElement.classList.toggle('open')); });
 
-    // Screenshot resizing
-    function sizeScreenshots(){ /* same logic */ }
+    // Fit screenshots:
+    // Desktop: set height ~= 60% of intrinsic to preserve aspect in phone frame
+    // Mobile (<=768px): scale by width for larger, balanced image
+    function sizeScreenshots(){
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      document.querySelectorAll('img.screenshot').forEach(img=>{
+        const setSize = () => {
+          if(isMobile){
+            img.style.width = '100%';
+            img.style.height = 'auto';
+          }else{
+            img.style.height = Math.round(img.naturalHeight * 0.60) + 'px';
+            img.style.width = 'auto';
+          }
+        };
+        if (img.naturalHeight) setSize();
+        else img.addEventListener('load', setSize, {once:true});
+      });
+    }
     document.addEventListener('DOMContentLoaded', sizeScreenshots);
     window.addEventListener('resize', sizeScreenshots);
 
-    // ✅ Xano form submission with GA
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.qa .q').forEach(q=>{ q.addEventListener('click',()=>q.parentElement.classList.toggle('open')); });
+
+    // Fit screenshots...
+    function sizeScreenshots(){ ... }
+    document.addEventListener('DOMContentLoaded', sizeScreenshots);
+    window.addEventListener('resize', sizeScreenshots);
+
+    // ✅ Xano form submission
     const form = document.getElementById('waitlist-form');
     const messageBox = document.getElementById('form-message');
 
-    function getUTMParams(){ /* same logic */ }
-    function getDeviceInfo(){ /* same logic */ }
+    function getUTMParams() { ... }
+    function getDeviceInfo() { ... }
 
-    form.addEventListener("submit", async (e)=>{
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const baseData = { name: form.name.value, email: form.email.value, sport: form.sport.value,
-        signup_url: window.location.href, referrer: document.referrer||null, language: navigator.language||null,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone||null, ...getUTMParams(), ...getDeviceInfo()
-      };
-      try{
+      const baseData = { name: form.name.value, email: form.email.value, sport: form.sport.value, signup_url: window.location.href, referrer: document.referrer || null, language: navigator.language || null, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null, ...getUTMParams(), ...getDeviceInfo() };
+
+      try {
         const geoRes = await fetch("https://ipapi.co/json/");
         const geoData = await geoRes.json();
-        baseData.country = geoData.country_name||null;
-        baseData.city = geoData.city||null;
+        baseData.country = geoData.country_name || null;
+        baseData.city = geoData.city || null;
 
-        const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(baseData)});
+        const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(baseData),
+        });
+
         const data = await res.json();
-
-        if(data.success){
+        if (data.success) {
           messageBox.textContent = data.message;
           messageBox.style.color = "#4ade80";
           form.reset();
-          if(typeof gtag==="function"){ gtag("event","waitlist_signup",{event_category:"engagement",event_label:"Early Access Waitlist",value:1}); }
         } else {
           messageBox.textContent = data.message;
           messageBox.style.color = "#f87171";
         }
-      }catch(err){
+      } catch (err) {
         messageBox.textContent = "Error connecting to server. Please try again later.";
         messageBox.style.color = "#f87171";
       }
     });
   </script>
 
-  <script>
-    const pricing = { /* your pricing map as before */ };
-    async function setLocalizedPrice(){ /* same logic */ }
-    setLocalizedPrice();
-  </script>
+<script>
+  const pricing = {
+    "US": { price: 9.99, currency: "$" },
+    "CA": { price: 9.99, currency: "C$" },
+    "MX": { price: 149, currency: "MX$" },
+    "GB": { price: 9.99, currency: "£" },
+    "IE": { price: 9.99, currency: "€" },
+    "FR": { price: 9.99, currency: "€" },
+    "DE": { price: 9.99, currency: "€" },
+    "IT": { price: 9.99, currency: "€" },
+    "ES": { price: 9.99, currency: "€" },
+    "NL": { price: 9.99, currency: "€" },
+    "SE": { price: 99, currency: "kr" },
+    "NO": { price: 99, currency: "kr" },
+    "DK": { price: 99, currency: "kr" },
+    "CH": { price: 9.99, currency: "CHF" },
+    "EU": { price: 9.99, currency: "€" },
+    "IN": { price: 399, currency: "₹" },
+    "SG": { price: 9.99, currency: "S$" },
+    "HK": { price: 79, currency: "HK$" },
+    "JP": { price: 1200, currency: "¥" },
+    "KR": { price: 11900, currency: "₩" },
+    "CN": { price: 68, currency: "¥" },
+    "AE": { price: 36, currency: "AED" },
+    "AU": { price: 9.99, currency: "A$" },
+    "NZ": { price: 9.99, currency: "NZ$" },
+    "BR": { price: 39, currency: "R$" },
+    "AR": { price: 3499, currency: "ARS$" },
+    "CL": { price: 7990, currency: "CLP$" },
+    "ZA": { price: 99, currency: "R" },
+    "NG": { price: 7500, currency: "₦" },
+    "EG": { price: 299, currency: "E£" },
+    "default": { price: 9.99, currency: "$" }
+  };
+
+  async function setLocalizedPrice() {
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      const country = data.country || "default";
+      const region = pricing[country] || pricing["default"];
+      document.getElementById("price").innerText = `${region.currency}${region.price}`;
+    } catch (err) {
+      console.error("Geo lookup failed:", err);
+      document.getElementById("price").innerText = `${pricing.default.currency}${pricing.default.price}`;
+    }
+  }
+
+  setLocalizedPrice();
+</script>
+
 </body>
 </html>
