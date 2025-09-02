@@ -286,8 +286,6 @@ form > * { min-width: 0; }
 </form>
 <div id='\"form-message\"' style='\"margin-top:10px;font-size:0.9rem;\"'></div>
 <div class="helper">We only email about Early Access. Unsubscribe anytime.</div>
-<div aria-live="polite" class="success" id="status" role="status" style="display:none">Thanks for joining! Watch your inbox for Early Access.</div>
-<div aria-live="polite" class="error" id="error" role="status" style="display:none">Something went wrong—please try again.</div>
 </div>
 </div>
 </section>
@@ -368,7 +366,6 @@ form > * { min-width: 0; }
 </script>
 <script>
   const form = document.getElementById('waitlist-form');
-  const messageBox = document.getElementById('form-message');
 
   function getUTMParams() {
     const params = new URLSearchParams(window.location.search);
@@ -390,78 +387,43 @@ form > * { min-width: 0; }
     };
   }
 
-  
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const baseData = {
-    name: form.name.value,
-    email: form.email.value,
-    sport: form.sport.value,
-    signup_url: window.location.href,
-    referrer: document.referrer || "",
-    language: navigator.language || "",
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
-    updated_at: new Date().toISOString(),
-    status: "new",
-    waitlist_type: "early_access",
-    ...getUTMParams(),
-    ...getDeviceInfo()
-  };
+    const baseData = {
+      name: form.name.value,
+      email: form.email.value,
+      sport: form.sport.value,
+      signup_url: window.location.href,
+      referrer: document.referrer || "",
+      language: navigator.language || "",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+      updated_at: new Date().toISOString(),
+      status: "new",
+      waitlist_type: "early_access",
+      ...getUTMParams(),
+      ...getDeviceInfo()
+    };
 
-  const statusEl = document.getElementById("status");
-  const errorEl = document.getElementById("error");
+    const messageBox = document.getElementById("form-message");
+    messageBox.textContent = ""; // reset
 
-  // reset messages
-  statusEl.style.display = "none";
-  errorEl.style.display = "none";
+    try {
+      const geoRes = await fetch("https://ipapi.co/json/");
+      const geoData = await geoRes.json();
+      baseData.country = geoData.country_name || "";
+      baseData.city = geoData.city || "";
 
-  try {
-    const geoRes = await fetch("https://ipapi.co/json/");
-    const geoData = await geoRes.json();
-    baseData.country = geoData.country_name || "";
-    baseData.city = geoData.city || "";
-
-    const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(baseData),
-    });
-
-    if (res.ok) {
-      statusEl.style.display = "block"; // ✅ show success
-      form.reset();
-
-      gtag("event", "form_submission", {
-        event_category: "Waitlist",
-        event_label: baseData.sport,
-        value: 1
+      const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(baseData),
       });
-    } else {
-      errorEl.textContent = "Something went wrong—please try again.";
-      errorEl.style.display = "block"; // show error
-      gtag("event", "form_error", {
-        event_category: "Waitlist",
-        event_label: baseData.sport,
-        value: 0
-      });
-    }
-  } catch (err) {
-    errorEl.textContent = "Error connecting to server. Please try again later.";
-    errorEl.style.display = "block"; // show error
-    gtag("event", "form_error", {
-      event_category: "Waitlist",
-      event_label: baseData.sport,
-      value: 0
-    });
-  }
-});
-
 
       const data = await res.json();
 
-      if (res.ok) {
-        messageBox.textContent = "Thanks for joining! Watch your inbox for Early Access.";
+      if (res.ok && data.success) {
+        messageBox.textContent = data.message || "Thanks for joining! Watch your inbox for Early Access.";
         messageBox.style.color = "#4ade80";
         form.reset();
 
@@ -472,21 +434,23 @@ form.addEventListener("submit", async (e) => {
         });
       } else {
         messageBox.textContent = data.message || "Something went wrong—please try again.";
+        messageBox.style.color = "#f87171";
+
         gtag("event", "form_error", {
           event_category: "Waitlist",
           event_label: baseData.sport,
           value: 0
         });
-        messageBox.style.color = "#f87171";
       }
     } catch (err) {
       messageBox.textContent = "Error connecting to server. Please try again later.";
+      messageBox.style.color = "#f87171";
+
       gtag("event", "form_error", {
         event_category: "Waitlist",
         event_label: baseData.sport,
         value: 0
       });
-      messageBox.style.color = "#f87171";
     }
   });
 </script></body>
