@@ -2,6 +2,15 @@
 
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-XMVPNW6YH1"></script>
+<script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XMVPNW6YH1');
+    </script>
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>VeroFit — AI Training Plans with Tournament Mode</title>
@@ -264,8 +273,6 @@ form > * { min-width: 0; }
 <h2 class="section-title" style="margin:0">Get Early Access</h2>
 <p class="muted" style="margin:6px 0 0">Be among the first 100 and secure <strong>30% off for your first year</strong>.</p>
 <form id="waitlist-form">
-
-
 <input autocomplete="name" name="name" placeholder="Your name" required="" type="text"/>
 <input autocomplete="email" name="email" placeholder="name@yourmail.com" required="" type="email"/>
 <select name="sport">
@@ -278,8 +285,6 @@ form > * { min-width: 0; }
 </form>
 <div id='\"form-message\"' style='\"margin-top:10px;font-size:0.9rem;\"'></div>
 <div class="helper">We only email about Early Access. Unsubscribe anytime.</div>
-
-
 </div>
 </div>
 </section>
@@ -308,7 +313,6 @@ form > * { min-width: 0; }
 </div>
 </section>
 <footer><div class="container">© 2025 Verletics — VeroFit. All rights reserved.</div></footer>
-
 <script>
   const pricing = {
     "US": { price: 9.99, currency: "$" },
@@ -400,72 +404,87 @@ function getDeviceInfo() {
   };
 }
 
-// Form handler for Xano
-const form = document.getElementById('waitlist-form');
-const messageBox = document.getElementById('form-message');
+// Form handler for Xano with spinner + GA tracking
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById('waitlist-form');
+  const messageBox = document.getElementById('form-message');
+  const submitBtn = form.querySelector('button[type="submit"]');
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  messageBox.textContent = "";
-  messageBox.style.color = "#fff";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const baseData = {
-    name: form.name.value,
-    email: form.email.value,
-    sport: form.sport.value,
-    signup_url: window.location.href,
-    referrer: document.referrer || "",
-    language: navigator.language || "",
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
-    updated_at: new Date().toISOString(),
-    status: "new",
-    waitlist_type: "early_access",
-    ...getUTMParams(),
-    ...getDeviceInfo()
-  };
+    // Spinner loading state
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Joining…";
 
-  try {
-    const geoRes = await fetch("https://ipapi.co/json/");
-    const geoData = await geoRes.json();
-    baseData.country = geoData.country_name || "";
-    baseData.city = geoData.city || "";
+    messageBox.textContent = "";
+    messageBox.style.color = "#94a3b8";
 
-    const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(baseData),
-    });
+    const baseData = {
+      name: form.name.value,
+      email: form.email.value,
+      sport: form.sport.value,
+      signup_url: window.location.href,
+      referrer: document.referrer || "",
+      language: navigator.language || "",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+      updated_at: new Date().toISOString(),
+      status: "new",
+      waitlist_type: "early_access",
+      ...getUTMParams(),
+      ...getDeviceInfo()
+    };
 
-    const data = await res.json();
+    try {
+      const geoRes = await fetch("https://ipapi.co/json/");
+      const geoData = await geoRes.json();
+      baseData.country = geoData.country_name || "";
+      baseData.city = geoData.city || "";
 
-    if (res.ok && data.success) {
-      messageBox.textContent = data.message || "Thanks for joining! Watch your inbox for Early Access.";
-      messageBox.style.color = "#4ade80";
-      form.reset();
-
-      gtag("event", "form_submission", {
-        event_category: "Waitlist",
-        event_label: baseData.sport,
-        value: 1
+      const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(baseData),
       });
-    } else {
-      messageBox.textContent = data.message || "Something went wrong—please try again.";
+
+      const data = await res.json();
+      console.log("Xano response:", data);
+
+      if (res.ok && data.success) {
+        messageBox.textContent = data.message || "Thanks for joining!";
+        messageBox.style.color = "#4ade80"; // green
+        form.reset();
+
+        gtag("event", "form_submission", {
+          event_category: "Waitlist",
+          event_label: baseData.sport,
+          value: 1
+        });
+      } else {
+        messageBox.textContent = data.message || "Something went wrong—please try again.";
+        messageBox.style.color = "#f87171"; // red
+        gtag("event", "form_error", {
+          event_category: "Waitlist",
+          event_label: baseData.sport,
+          value: 0
+        });
+      }
+    } catch (err) {
+      console.error("Xano error:", err);
+      messageBox.textContent = "Error connecting to server. Please try again later.";
       messageBox.style.color = "#f87171";
       gtag("event", "form_error", {
         event_category: "Waitlist",
-        event_label: baseData.sport,
+        event_label: "unknown",
         value: 0
       });
+    } finally {
+      // Reset button state
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
     }
-  } catch (err) {
-    messageBox.textContent = "Error connecting to server. Please try again later.";
-    messageBox.style.color = "#f87171";
-    gtag("event", "form_error", {
-      event_category: "Waitlist",
-      event_label: "unknown",
-      value: 0
-    });
-  }
+  });
 });
 </script></body>
 </html>
