@@ -403,7 +403,7 @@ function getDeviceInfo() {
   };
 }
 
-// Form handler for Xano with spinner + GA tracking
+// Form handler for Xano with spinner, GA rich params, parallel geo fetch
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('waitlist-form');
   const messageBox = document.getElementById('form-message');
@@ -415,11 +415,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Spinner loading state
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
-    submitBtn.textContent = "Joining…";
+    submitBtn.innerHTML = "Joining… <span class='spinner'></span>";
 
-    messageBox.textContent = "";
+    messageBox.textContent = "Submitting…";
     messageBox.style.color = "#94a3b8";
 
+    // Build payload
     const baseData = {
       name: form.name.value,
       email: form.email.value,
@@ -436,8 +437,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const geoRes = await fetch("https://ipapi.co/json/");
-      const geoData = await geoRes.json();
+      // Fetch geo data in parallel
+      const geoPromise = fetch("https://ipapi.co/json/").then(r => r.json()).catch(() => ({}));
+
+      // Post to Xano
+      const [geoData] = await Promise.all([geoPromise]);
       baseData.country = geoData.country_name || "";
       baseData.city = geoData.city || "";
 
@@ -448,35 +452,41 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await res.json();
-      console.log("Xano response:", data);
 
       if (res.ok && data.success) {
         messageBox.textContent = data.message || "Thanks for joining!";
-        messageBox.style.color = "#4ade80"; // green
+        messageBox.style.color = "#4ade80";
         form.reset();
 
+        // GA event with richer params (no PII)
         gtag("event", "form_submission", {
           event_category: "Waitlist",
-          event_label: baseData.sport,
-          value: 1
+          sport: baseData.sport,
+          country: baseData.country,
+          city: baseData.city,
+          utm_source: baseData.utm_source,
+          utm_campaign: baseData.utm_campaign,
+          device: baseData.device
         });
       } else {
         messageBox.textContent = data.message || "Something went wrong—please try again.";
-        messageBox.style.color = "#f87171"; // red
+        messageBox.style.color = "#f87171";
         gtag("event", "form_error", {
           event_category: "Waitlist",
-          event_label: baseData.sport,
-          value: 0
+          sport: baseData.sport,
+          country: baseData.country,
+          utm_source: baseData.utm_source,
+          device: baseData.device
         });
       }
     } catch (err) {
-      console.error("Xano error:", err);
+      console.error("❌ Xano fetch failed:", err);
       messageBox.textContent = "Error connecting to server. Please try again later.";
       messageBox.style.color = "#f87171";
       gtag("event", "form_error", {
         event_category: "Waitlist",
-        event_label: "unknown",
-        value: 0
+        sport: baseData.sport || "unknown",
+        device: baseData.device || "unknown"
       });
     } finally {
       // Reset button state
