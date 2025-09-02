@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<!-- Google tag (gtag.js) -->
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-XMVPNW6YH1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  // Replace with your GA4 Measurement ID
-  gtag('config', 'G-XMVPNW6YH1');
-</script>
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -274,6 +264,8 @@ form > * { min-width: 0; }
 <h2 class="section-title" style="margin:0">Get Early Access</h2>
 <p class="muted" style="margin:6px 0 0">Be among the first 100 and secure <strong>30% off for your first year</strong>.</p>
 <form id="waitlist-form">
+
+
 <input autocomplete="name" name="name" placeholder="Your name" required="" type="text"/>
 <input autocomplete="email" name="email" placeholder="name@yourmail.com" required="" type="email"/>
 <select name="sport">
@@ -286,6 +278,8 @@ form > * { min-width: 0; }
 </form>
 <div id='\"form-message\"' style='\"margin-top:10px;font-size:0.9rem;\"'></div>
 <div class="helper">We only email about Early Access. Unsubscribe anytime.</div>
+
+
 </div>
 </div>
 </section>
@@ -314,6 +308,7 @@ form > * { min-width: 0; }
 </div>
 </section>
 <footer><div class="container">© 2025 Verletics — VeroFit. All rights reserved.</div></footer>
+
 <script>
   const pricing = {
     "US": { price: 9.99, currency: "$" },
@@ -365,93 +360,112 @@ form > * { min-width: 0; }
   setLocalizedPrice();
 </script>
 <script>
-  const form = document.getElementById('waitlist-form');
-
-  function getUTMParams() {
-    const params = new URLSearchParams(window.location.search);
-    return {
-      utm_source: params.get("utm_source") || "",
-      utm_medium: params.get("utm_medium") || "",
-      utm_campaign: params.get("utm_campaign") || "",
-      utm_term: params.get("utm_term") || "",
-      utm_content: params.get("utm_content") || ""
-    };
-  }
-
-  function getDeviceInfo() {
-    return {
-      device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
-      browser: navigator.userAgent,
-      os: navigator.platform,
-      screen: `${window.screen.width}x${window.screen.height}`
-    };
-  }
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const baseData = {
-      name: form.name.value,
-      email: form.email.value,
-      sport: form.sport.value,
-      signup_url: window.location.href,
-      referrer: document.referrer || "",
-      language: navigator.language || "",
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
-      updated_at: new Date().toISOString(),
-      status: "new",
-      waitlist_type: "early_access",
-      ...getUTMParams(),
-      ...getDeviceInfo()
-    };
-
-    const messageBox = document.getElementById("form-message");
-    messageBox.textContent = ""; // reset
-
-    try {
-      const geoRes = await fetch("https://ipapi.co/json/");
-      const geoData = await geoRes.json();
-      baseData.country = geoData.country_name || "";
-      baseData.city = geoData.city || "";
-
-      const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(baseData),
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        messageBox.textContent = data.message || "Thanks for joining! Watch your inbox for Early Access.";
-        messageBox.style.color = "#4ade80";
-        form.reset();
-
-        gtag("event", "form_submission", {
-          event_category: "Waitlist",
-          event_label: baseData.sport,
-          value: 1
-        });
+// Screenshot scaling
+function sizeScreenshots(){
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  document.querySelectorAll('img.screenshot').forEach(img => {
+    const setSize = () => {
+      if (isMobile) {
+        img.style.width = '100%';
+        img.style.height = 'auto';
       } else {
-        messageBox.textContent = data.message || "Something went wrong—please try again.";
-        messageBox.style.color = "#f87171";
-
-        gtag("event", "form_error", {
-          event_category: "Waitlist",
-          event_label: baseData.sport,
-          value: 0
-        });
+        img.style.height = Math.round(img.naturalHeight * 0.60) + 'px'; // 60% for desktop
+        img.style.width = 'auto';
       }
-    } catch (err) {
-      messageBox.textContent = "Error connecting to server. Please try again later.";
-      messageBox.style.color = "#f87171";
+    };
+    if (img.naturalHeight) setSize();
+    else img.addEventListener('load', setSize, { once:true });
+  });
+}
+document.addEventListener('DOMContentLoaded', sizeScreenshots);
+window.addEventListener('resize', sizeScreenshots);
 
+// UTM + device helpers
+function getUTMParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get("utm_source") || "",
+    utm_medium: params.get("utm_medium") || "",
+    utm_campaign: params.get("utm_campaign") || "",
+    utm_term: params.get("utm_term") || "",
+    utm_content: params.get("utm_content") || ""
+  };
+}
+function getDeviceInfo() {
+  return {
+    device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
+    browser: navigator.userAgent,
+    os: navigator.platform,
+    screen: `${window.screen.width}x${window.screen.height}`
+  };
+}
+
+// Form handler for Xano
+const form = document.getElementById('waitlist-form');
+const messageBox = document.getElementById('form-message');
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  messageBox.textContent = "";
+  messageBox.style.color = "#fff";
+
+  const baseData = {
+    name: form.name.value,
+    email: form.email.value,
+    sport: form.sport.value,
+    signup_url: window.location.href,
+    referrer: document.referrer || "",
+    language: navigator.language || "",
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+    updated_at: new Date().toISOString(),
+    status: "new",
+    waitlist_type: "early_access",
+    ...getUTMParams(),
+    ...getDeviceInfo()
+  };
+
+  try {
+    const geoRes = await fetch("https://ipapi.co/json/");
+    const geoData = await geoRes.json();
+    baseData.country = geoData.country_name || "";
+    baseData.city = geoData.city || "";
+
+    const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(baseData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      messageBox.textContent = data.message || "Thanks for joining! Watch your inbox for Early Access.";
+      messageBox.style.color = "#4ade80";
+      form.reset();
+
+      gtag("event", "form_submission", {
+        event_category: "Waitlist",
+        event_label: baseData.sport,
+        value: 1
+      });
+    } else {
+      messageBox.textContent = data.message || "Something went wrong—please try again.";
+      messageBox.style.color = "#f87171";
       gtag("event", "form_error", {
         event_category: "Waitlist",
         event_label: baseData.sport,
         value: 0
       });
     }
-  });
+  } catch (err) {
+    messageBox.textContent = "Error connecting to server. Please try again later.";
+    messageBox.style.color = "#f87171";
+    gtag("event", "form_error", {
+      event_category: "Waitlist",
+      event_label: "unknown",
+      value: 0
+    });
+  }
+});
 </script></body>
 </html>
