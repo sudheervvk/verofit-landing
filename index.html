@@ -274,8 +274,6 @@ form > * { min-width: 0; }
 <h2 class="section-title" style="margin:0">Get Early Access</h2>
 <p class="muted" style="margin:6px 0 0">Be among the first 100 and secure <strong>30% off for your first year</strong>.</p>
 <form id="waitlist-form">
-
-
 <input autocomplete="name" name="name" placeholder="Your name" required="" type="text"/>
 <input autocomplete="email" name="email" placeholder="name@yourmail.com" required="" type="email"/>
 <select name="sport">
@@ -392,35 +390,73 @@ form > * { min-width: 0; }
     };
   }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const baseData = {
-      name: form.name.value,
-      email: form.email.value,
-      sport: form.sport.value,
-      signup_url: window.location.href,
-      referrer: document.referrer || "",
-      language: navigator.language || "",
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
-      updated_at: new Date().toISOString(),
-      status: "new",
-      waitlist_type: "early_access",
-      ...getUTMParams(),
-      ...getDeviceInfo()
-    };
+  const baseData = {
+    name: form.name.value,
+    email: form.email.value,
+    sport: form.sport.value,
+    signup_url: window.location.href,
+    referrer: document.referrer || "",
+    language: navigator.language || "",
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+    updated_at: new Date().toISOString(),
+    status: "new",
+    waitlist_type: "early_access",
+    ...getUTMParams(),
+    ...getDeviceInfo()
+  };
 
-    try {
-      const geoRes = await fetch("https://ipapi.co/json/");
-      const geoData = await geoRes.json();
-      baseData.country = geoData.country_name || "";
-      baseData.city = geoData.city || "";
+  const statusEl = document.getElementById("status");
+  const errorEl = document.getElementById("error");
 
-      const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(baseData),
+  // reset messages
+  statusEl.style.display = "none";
+  errorEl.style.display = "none";
+
+  try {
+    const geoRes = await fetch("https://ipapi.co/json/");
+    const geoData = await geoRes.json();
+    baseData.country = geoData.country_name || "";
+    baseData.city = geoData.city || "";
+
+    const res = await fetch("https://x8ki-letl-twmt.n7.xano.io/api:eHoBWKEJ/early_access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(baseData),
+    });
+
+    if (res.ok) {
+      statusEl.style.display = "block"; // ✅ show success
+      form.reset();
+
+      gtag("event", "form_submission", {
+        event_category: "Waitlist",
+        event_label: baseData.sport,
+        value: 1
       });
+    } else {
+      errorEl.textContent = "Something went wrong—please try again.";
+      errorEl.style.display = "block"; // show error
+      gtag("event", "form_error", {
+        event_category: "Waitlist",
+        event_label: baseData.sport,
+        value: 0
+      });
+    }
+  } catch (err) {
+    errorEl.textContent = "Error connecting to server. Please try again later.";
+    errorEl.style.display = "block"; // show error
+    gtag("event", "form_error", {
+      event_category: "Waitlist",
+      event_label: baseData.sport,
+      value: 0
+    });
+  }
+});
+
 
       const data = await res.json();
 
